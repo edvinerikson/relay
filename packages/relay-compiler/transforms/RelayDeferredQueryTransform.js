@@ -40,6 +40,7 @@ const ID = 'id';
 const ID_TYPE = 'ID';
 const NODE_TYPE = 'Node';
 
+
 /**
  *
  */
@@ -50,13 +51,19 @@ function relayDeferredQueryTransform(
   const nodeType = assertAbstractType(context.schema.getType(NODE_TYPE));
   const queryType = assertCompositeType(context.schema.getQueryType());
   let newQueries = [];
+  let idCounter = 0;
+
+  function generateID() {
+    return idCounter++;
+  }
 
   function visitRoot(root, state) {
     // state.queryName = root.name;
+    const id = generateID();
     state = {
       queryName: root.name,
       splitQueries: [],
-      parentRoot: root,
+      parentID: id,
     };
     const result = this.traverse(root, state);
     newQueries = state.splitQueries.map((x => x.root));
@@ -79,14 +86,15 @@ function relayDeferredQueryTransform(
         typeCondition: fragment.type,
         selections: []
       };
-      const queryName = `${state.queryName}Deferred${state.splitQueries.length + 1}`;
+      const id = generateID();
+      const queryName = `${state.queryName}Deferred${id}`;
       const deferredQuery = buildDeferredQuery(queryName, inlineFragment);
       const newState = {
         queryName: state.queryName,
         splitQueries: state.splitQueries,
-        parentRoot: deferredQuery
+        parentID: id
       };
-      state.splitQueries.push({ required: state.parentRoot, root: deferredQuery });
+      state.splitQueries.push({ id, required: state.parentID, root: deferredQuery });
       const newFragment = this.traverse(fragment, newState);
       inlineFragment.selections = newFragment.selections;
       return null;
