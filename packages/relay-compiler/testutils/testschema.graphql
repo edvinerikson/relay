@@ -770,3 +770,4 @@ type Settings {
 }
 
 directive @customDirective(level: Int!) on FIELD
+directive @defer on FRAGMENTSPREAD

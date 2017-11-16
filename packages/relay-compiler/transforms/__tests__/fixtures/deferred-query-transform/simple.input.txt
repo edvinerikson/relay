@@ -1,0 +1,10 @@
+fragment UserDetails on User {
+  lastName
+}
+
+query UserQuery {
+  username(name: "edvin") {
+    name
+    ...UserDetails @defer
+  }
+}

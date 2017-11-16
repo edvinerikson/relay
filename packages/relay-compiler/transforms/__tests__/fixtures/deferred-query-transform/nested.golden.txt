@@ -1,0 +1,33 @@
+fragment ExtraUserDetails on User {
+  tracking
+}
+
+fragment UserDetails on User {
+  lastName
+}
+
+query UserQuery {
+  username(name: "edvin") {
+    name
+  }
+}
+
+query UserQueryDeferred1(
+  $id: ID!
+) {
+  node(id: $id) {
+    ... on User {
+      lastName
+    }
+  }
+}
+
+query UserQueryDeferred2(
+  $id: ID!
+) {
+  node(id: $id) {
+    ... on User {
+      tracking
+    }
+  }
+}

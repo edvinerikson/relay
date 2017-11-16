@@ -1,0 +1,15 @@
+fragment ExtraUserDetails on User {
+  tracking
+}
+
+fragment UserDetails on User {
+  lastName
+  ...ExtraUserDetails @defer
+}
+
+query UserQuery {
+  username(name: "edvin") {
+    name
+    ...UserDetails @defer
+  }
+}
